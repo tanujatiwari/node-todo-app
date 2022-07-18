@@ -32,7 +32,6 @@ module.exports.updateTodo = (req, res) => {
         if (err)
             res.send(err)
         let iscompleted = req.body.isCompleted ? req.body.isCompleted : false
-        // let todo = req.body.todo ? req.body.todo : await client.query(`select todo from todo where id='${req.params.id}'`)
         let resp = await client.query(`update todo set todo='${req.body.todo}', iscompleted=${iscompleted} where id='${req.params.id}'`)
         res.redirect('/todo/all')
     })

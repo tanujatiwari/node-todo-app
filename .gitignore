@@ -3,3 +3,4 @@
 database.json
 /migrations
 .db-migraterc
+requests.rest
