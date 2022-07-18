@@ -8,4 +8,10 @@ let pool = new Pool({
     database: process.env.PGDB
 })
 
+pool.connect(async (err) => {
+    if (err)
+        console.log("Pool connect err:", err.message)
+    console.log("Pool Connected")
+})
+
 module.exports = pool;
