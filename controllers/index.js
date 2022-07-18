@@ -1,7 +1,7 @@
 const pool = require('../models/todo')
 
 module.exports.all = async (req, res) => {
-    let resp = await pool.query(`select * from todo`)
+    let resp = await pool.query(`select * from todo order by deadline`)
     res.send(resp.rows)
 }
 
@@ -24,6 +24,11 @@ module.exports.updateTodo = async (req, res) => {
     let iscompleted = req.body.isCompleted ? req.body.isCompleted : false
     let resp = await pool.query(`update todo set todo_name='${req.body.todo}', iscompleted=${iscompleted} where todo_id='${req.params.id}'`)
     res.redirect('/todo/all')
+}
+
+module.exports.searchTodo = async (req, res) => {
+    let resp = await pool.query(`select * from todo where todo_name ilike '%${req.query.q}%'`)
+    res.send(resp.rows)
 }
 
 module.exports.notFound = (req, res) => {

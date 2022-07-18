@@ -10,6 +10,8 @@ router.delete('/delete/:id', controller.deleteTodo)
 
 router.patch('/update/:id', controller.updateTodo)
 
+router.get('/search', controller.searchTodo)
+
 router.get('*', controller.notFound)
 
 module.exports = router
