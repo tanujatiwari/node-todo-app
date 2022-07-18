@@ -1,17 +1,17 @@
 const express = require('express')
 const router = express.Router()
-const controller = require('../controllers/index')
+const crud = require('../controllers/index')
 
-router.get('/all', controller.all)
+router.get('/all', crud.all)
 
-router.post('/add', controller.newTodo)
+router.post('/add', crud.newTodo)
 
-router.delete('/delete/:id', controller.deleteTodo)
+router.delete('/delete/:id', crud.deleteTodo)
 
-router.patch('/update/:id', controller.updateTodo)
+router.patch('/update/:id', crud.updateTodo)
 
-router.get('/search', controller.searchTodo)
+router.get('/search', crud.searchTodo)
 
-router.get('*', controller.notFound)
+router.get('*', crud.notFound)
 
 module.exports = router

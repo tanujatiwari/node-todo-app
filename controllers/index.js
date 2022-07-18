@@ -15,11 +15,11 @@ module.exports.newTodo = async (req, res) => {
         let date = ts.getDate();
         let month = ts.getMonth();
         let year = ts.getFullYear();
-        let currDate = `${year}-${month}-${date}`;
+        let currDate = year + "-" + month + "-" + date;
         let resp = await pool.query(`insert into todo(todo_name, deadline, created_on) values ('${req.body.todo}','${req.body.deadline}','${currDate}')`)
         res.redirect('/todo/all')
     } catch (err) {
-        res.send('Something went wrong')
+        res.send(err)
     }
 }
 
