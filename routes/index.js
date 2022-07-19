@@ -1,6 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const crud = require('../controllers/index')
+const authenticateToken = require('../middlewares/index')
+
+router.use('/', authenticateToken)
 
 router.get('/all', crud.all)
 
@@ -9,8 +12,6 @@ router.post('/add', crud.newTodo)
 router.delete('/delete/:id', crud.deleteTodo)
 
 router.patch('/update/:id', crud.updateTodo)
-
-router.get('/search', crud.searchTodo)
 
 router.get('*', crud.notFound)
 
