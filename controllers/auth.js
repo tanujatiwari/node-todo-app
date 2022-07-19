@@ -11,7 +11,10 @@ module.exports.register = async (req, res) => {
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(req.body.password, salt)
         let resp = await pool.query(`insert into users(username, password) values('${req.body.username}','${hashedPassword}')`)
-        res.send('User registered!')
+        const user = { name: req.body.username }
+        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '10m' })
+        console.log(accessToken)
+        res.json({ accessToken: accessToken })
     } catch (err) {
         res.send('Something went wrong...')
     }
@@ -24,7 +27,10 @@ module.exports.login = async (req, res) => {
             return res.send('User not found')
         }
         if (await bcrypt.compare(req.body.password, resp.rows[0].password)) {
-            res.send('Logged in!')
+            const user = { name: req.body.username }
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '10m' })
+            console.log(accessToken)
+            res.json({ accessToken: accessToken })
         }
         else {
             res.send('Incorrect password')
