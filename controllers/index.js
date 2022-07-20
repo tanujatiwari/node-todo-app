@@ -1,9 +1,10 @@
 const dbHelper = require('../dbHelper/index')
+const utils = require('../utils/index')
 
 module.exports.all = async (req, res) => {
     let { q, offset = 0, limit = 5 } = req.query
     try {
-        let user_id = await dbHelper.getUserId(req.user)
+        let user_id = await dbHelper.getUserId(req.user.name)
         if (q == undefined) {
             resp = await dbHelper.getAllTodos(user_id, limit, offset)
         }
@@ -24,12 +25,8 @@ module.exports.all = async (req, res) => {
 module.exports.newTodo = async (req, res) => {
     let { todo, deadline } = req.body;
     try {
-        let ts = new Date();
-        let date = ts.getDate();
-        let month = ts.getMonth(); ``
-        let year = ts.getFullYear();
-        let currDate = year + "-" + month + "-" + date;
-        let user_id = await dbHelper.getUserId(req.user)
+        let currDate = await utils.currDate()
+        let user_id = await dbHelper.getUserId(req.user.name)
         let resp = await dbHelper.addNewTodo(todo, deadline, currDate, user_id)
         res.redirect('/todo/all')
     } catch (err) {
@@ -39,7 +36,7 @@ module.exports.newTodo = async (req, res) => {
 
 module.exports.deleteTodo = async (req, res) => {
     try {
-        let user_id = await dbHelper.getUserId(req.user)
+        let user_id = await dbHelper.getUserId(req.user.name)
         let resp = await dbHelper.deleteTodo(req.params.id, user_id)
         res.redirect('/todo/all')
     } catch (e) {
@@ -52,7 +49,7 @@ module.exports.updateTodo = async (req, res) => {
     try {
         isCompleted = isCompleted ? isCompleted : false
         archived = archived ? archived : false
-        let user_id = await dbHelper.getUserId(req.user)
+        let user_id = await dbHelper.getUserId(req.user.name)
         let resp = await dbHelper.updateTodo(todo, isCompleted, archived, req.params.id, user_id)
         res.redirect('/todo/all')
     } catch (e) {

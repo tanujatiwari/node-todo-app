@@ -1,7 +1,7 @@
 const pool = require('../models/todo')
 
-module.exports.getUserId = async (user) => {
-    let userID = await pool.query(`select user_id from users where username='${user.name}'`)
+module.exports.getUserId = async (name) => {
+    let userID = await pool.query(`select user_id from users where username='${name}'`)
     return (userID.rows[0].user_id)
 }
 
@@ -45,4 +45,20 @@ module.exports.deleteTodo = async (id, user_id) => {
 
 module.exports.updateTodo = async (todo, iscompleted, archived, id, user_id) => {
     return pool.query(`update todo set todo_name='${todo}', iscompleted=${iscompleted}, archived=${archived} where todo_id='${id}' and user_id='${user_id}'`)
+}
+
+module.exports.getSessionId = async (userId) => {
+    return pool.query(`select session_id from sessionStorage where user_id='${userId}' `)
+}
+
+module.exports.storeSession = async (userId, currDate) => {
+    return pool.query(`insert into sessionStorage(user_id, created_on) values('${userId}', '${currDate}') `)
+}
+
+module.exports.invalidateToken = async (currDate, sessionId) => {
+    return pool.query(`update sessionStorage set ended_on= '${currDate}' where session_id='${sessionId}'`)
+}
+
+module.exports.isInvalidatedToken = async (sessionId) => {
+    return pool.query(`select ended_on from sessionStorage where session_id ='${sessionId}'`)
 }

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const crud = require('../controllers/index')
-const authenticateToken = require('../middlewares/index')
+const authenticateToken = require('../middlewares/jwt')
 
 router.use('/', authenticateToken)
 
