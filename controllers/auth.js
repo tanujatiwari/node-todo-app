@@ -13,13 +13,12 @@ module.exports.register = async (req, res) => {
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt)
         let resp = await dbHelper.createUser(username, hashedPassword)
-        let userId = await dbHelper.getUserId(username)
         let currDate = await utils.currDate();
-        let storeSession = await dbHelper.storeSession(userId, currDate)
-        let session = await dbHelper.getSessionId(userId);
+        let storeSession = await dbHelper.storeSession(req.user.userId, currDate)
+        let session = await dbHelper.getSessionId(req.user.userId);
         let sessionId = session.rows[0].session_id
-        const user = { name: username, sessionId: sessionId, userId: userId }
-        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '60m' })
+        const user = { name: username, sessionId: sessionId, userId: req.user.userId }
+        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '10m' })
         res.json({ accessToken: accessToken })
     } catch (err) {
         res.send('Something went wrong...')
@@ -35,8 +34,8 @@ module.exports.login = async (req, res) => {
             return res.send('User not found')
         }
         if (await bcrypt.compare(password, resp.rows[0].password)) {
-            let userId = await dbHelper.getUserId(username)
             let currDate = await utils.currDate();
+            let userId = await dbHelper.getUserId(username)
             let storeSession = await dbHelper.storeSession(userId, currDate)
             let session = await dbHelper.getSessionId(userId);
             let sessionId = session.rows[0].session_id
@@ -55,8 +54,7 @@ module.exports.login = async (req, res) => {
 
 module.exports.deleteUser = async (req, res) => {
     try {
-        let user_id = await dbHelper.getUserId(req.user.name)
-        let resp = await dbHelper.deleteUser(user_id);
+        let resp = await dbHelper.deleteUser(req.user.userId);
         res.send('User successfully deleted')
     }
     catch (e) {
